@@ -1,0 +1,20 @@
+# JetBrains IntelliJ
+.idea/
+*.iml
+*.ipr
+*.iws
+# Simple Build Tool
+target/
+lib_managed/
+src_managed/
+project/boot/
+.history
+.cache
+# Vim
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+*.un~
+Session.vim
+.netrwhist
+*~
+
