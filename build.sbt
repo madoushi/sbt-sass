@@ -21,3 +21,11 @@ resolvers ++= List(
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-web" % "1.2.2")
 
+// Publishing options
+// ==================
+bintrayOrganization := Option("madoushi")
+bintrayPackageLabels := Seq("sbt", "sbt-plugin", "sass")
+bintrayReleaseOnPublish in ThisBuild := false
+bintrayRepository := "sbt-plugins"
+publishMavenStyle := false
+licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html"))
