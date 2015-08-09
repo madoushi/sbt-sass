@@ -21,6 +21,8 @@ resolvers ++= List(
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-web" % "1.2.2")
 
+libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.5" % "test"
+
 // Publishing options
 // ==================
 bintrayOrganization := Option("madoushi")
