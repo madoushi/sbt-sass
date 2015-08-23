@@ -3,6 +3,8 @@
 *.iml
 *.ipr
 *.iws
+# SASS
+.sass-cache/
 # Simple Build Tool
 target/
 lib_managed/
