@@ -1,5 +1,7 @@
 # SASS plugin for sbt
 
+[![Build Status](https://travis-ci.org/madoushi/sbt-sass.svg?branch=master)](https://travis-ci.org/madoushi/sbt-sass)
+
 A sbt-plugin that enables you to use [SASS](http://sass-lang.com/) in your
 project.
 
