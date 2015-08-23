@@ -27,4 +27,7 @@ Also you should install (opitonal) compass if you want to use it:
 
 ## Usage
 
+## Development
+
+Please refer to the [contributing](CONTRIBUTING.md) guide.
 
