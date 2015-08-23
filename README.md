@@ -1,6 +1,7 @@
 # SASS plugin for sbt
 
 [![Build Status](https://travis-ci.org/madoushi/sbt-sass.svg?branch=master)](https://travis-ci.org/madoushi/sbt-sass)
+[![Download](https://api.bintray.com/packages/madoushi/sbt-plugins/sbt-sass/images/download.svg)](https://bintray.com/madoushi/sbt-plugins/sbt-sass/_latestVersion)
 
 A sbt-plugin that enables you to use [SASS](http://sass-lang.com/) in your
 project.
