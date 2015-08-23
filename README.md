@@ -27,6 +27,16 @@ Also you should install (opitonal) compass if you want to use it:
 
 ## Usage
 
+Add the madoushi sbt-plugins repository at bintray to your resolvers in `build.sbt`:
+
+    resolvers += "Madoushi sbt-plugins" at "https://dl.bintray.com/madoushi/sbt-plugins/"
+
+Now you can include the plugin in `project/plugins.sbt` or `project/sbt-sass.sbt` like this:
+
+    addSbtPlugin("org.madoushi.sbt" % "sbt-sass" % "VERSION")
+
+You should use the current stable version for `VERSION`.
+
 ## Development
 
 Please refer to the [contributing](CONTRIBUTING.md) guide.
