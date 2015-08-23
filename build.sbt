@@ -21,6 +21,8 @@ resolvers ++= List(
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-web" % "1.2.2")
 
+libraryDependencies += "org.apache.commons" % "commons-lang3" % "3.4" withJavadoc()
+
 libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.5" % "test"
 
 // Publishing options
