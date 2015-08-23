@@ -15,10 +15,7 @@ object SassCompiler {
       Seq("sass")
 
   /**
-   * Compile the given input file into a css and a minified css file.
-   * Additional options for the `sass` executable may be passed in via `options`.
-   * It returns a list of scss source files that were used. Which may be
-   * interesting if includes were used.
+   * A wrapper for `compile` that uses the default `sass` executable from the path.
    *
    * @param input          The input file containing SASS code.
    * @param output         The output file for the generated CSS.
@@ -26,18 +23,34 @@ object SassCompiler {
    * @param options        Additional options for the `sass` executable.
    * @return A list of filenames that were used to generate the css e.g. dependencies.
    */
-  def compile(input: File, output: File, outputMinified: File, options: Seq[String] = Seq.empty[String]): Seq[String] = {
+  def compileWithDefaultSass(input: File, output: File, outputMinified: File, options: Seq[String] = Seq.empty[String]) =
+    compile(command, input, output, outputMinified, options)
+
+  /**
+   * Compile the given input file into a css and a minified css file.
+   * Additional options for the `sass` executable may be passed in via `options`.
+   * It returns a list of scss source files that were used. Which may be
+   * interesting if includes were used.
+   *
+   * @param sassExecutable The path to the `sass` executable.
+   * @param input          The input file containing SASS code.
+   * @param output         The output file for the generated CSS.
+   * @param outputMinified The output file for the generated and minified CSS.
+   * @param options        Additional options for the `sass` executable.
+   * @return A list of filenames that were used to generate the css e.g. dependencies.
+   */
+  def compile(sassExecutable: Seq[String], input: File, output: File, outputMinified: File, options: Seq[String] = Seq.empty[String]): Seq[String] = {
     if (input.getParentFile == null)
       throw new SassCompilerException(Vector(s"No parent file return for $input!"))
 
     val parentPath = input.getParentFile.getAbsolutePath
 
     runCommand(
-      command ++ Seq("-l", "-I", parentPath) ++ options ++ Seq(Seq(input.getAbsolutePath, ":", output.getAbsolutePath).mkString)
+      sassExecutable ++ Seq("-l", "-I", parentPath) ++ options ++ Seq(Seq(input.getAbsolutePath, ":", output.getAbsolutePath).mkString)
     )
 
     runCommand(
-      command ++ Seq("-t", "compressed", "-I", parentPath) ++ options ++ Seq(Seq(input.getAbsolutePath, ":", outputMinified.getAbsolutePath).mkString)
+      sassExecutable ++ Seq("-t", "compressed", "-I", parentPath) ++ options ++ Seq(Seq(input.getAbsolutePath, ":", outputMinified.getAbsolutePath).mkString)
     )
 
     extractDependencies(output)
