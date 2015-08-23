@@ -37,6 +37,22 @@ Now you can include the plugin in `project/plugins.sbt` or `project/sbt-sass.sbt
 
 You should use the current stable version for `VERSION`.
 
+### Options
+
+Some options can be set for the plugin and the `sass` executable.
+
+#### sassExecutable
+
+This options tells the plugin the exact location of the `sass` program. If it is available from `PATH` this option doesn't have to be set.
+
+    sassExecutable in Assets := List("/home/user/.rbenv/shims/sass")
+
+#### sassOptions
+
+To pass additonal options to `sass` this setting can be used. To use `compass` for example use the following:
+
+    sassOptions in Assets ++= Seq("--compass", "-r", "compass")
+
 ## Development
 
 Please refer to the [contributing](CONTRIBUTING.md) guide.
