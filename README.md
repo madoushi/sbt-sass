@@ -10,6 +10,8 @@ This plugin is based on [sbt-sass](https://github.com/ShaggyYeti/sbt-sass)
 which is based on [play-sass](https://github.com/jlitola/play-sass). Both
 plugins seem to be abandoned. Therefore we decided to create this project.
 
+The initial development of this plugin was sponsored by the [Wegtam UG](http://www.wegtam.org).
+
 ## Prerequisites
 
 A sass compiler needs to be installed for the plugin to work. This means
