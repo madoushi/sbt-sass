@@ -1,3 +1,7 @@
+# Ensime
+.ensime
+.ensime_cache/
+.ensime*.log
 # JetBrains IntelliJ
 .idea/
 *.iml
