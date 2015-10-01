@@ -28,7 +28,23 @@ Also you should install (opitonal) compass if you want to use it:
 
     % gem install compass
 
+## Compatibility
+
+The plugin is based upon the [sbt-web](https://github.com/sbt/sbt-web) project
+therefore it should be compatible with any sbt project using sbt 0.13.8 or
+higher and with any version of the Play Framework 2.3 or higher.
+
 ## Usage
+
+We follow the conventions of the sbt-web project regarding the
+[directory layout](https://github.com/sbt/sbt-web#file-directory-layout). To simplify things
+it is recommended to just use the directory `app/assets/css` for sass files in projects using
+the Play Framework.
+
+Files starting with an underscore (`_`) are not compiled into css files. They can of course be
+referenced from other sass files via an `@import` directive.
+
+### Installation
 
 Add the madoushi sbt-plugins repository at bintray to your resolvers in `build.sbt`:
 
