@@ -1,6 +1,6 @@
 name := "sbt-sass"
 organization := "org.madoushi.sbt"
-version := "1.0.0-SNAPSHOT"
+version := "0.9.2"
 
 sbtPlugin := true
 
