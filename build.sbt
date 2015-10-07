@@ -4,7 +4,7 @@ version := "1.0.0-SNAPSHOT"
 
 sbtPlugin := true
 
-scalaVersion := "2.10.5"
+scalaVersion := "2.10.6"
 scalacOptions ++= Seq(
   "-unchecked",
   "-Xlint",
