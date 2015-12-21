@@ -15,10 +15,6 @@ scalacOptions ++= Seq(
 )
 incOptions := incOptions.value.withNameHashing(nameHashing = true)
 
-resolvers ++= List(
-  "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/"
-)
-
 addSbtPlugin("com.typesafe.sbt" % "sbt-web" % "1.2.2")
 
 libraryDependencies += "org.apache.commons" % "commons-lang3" % "3.4" withJavadoc()
