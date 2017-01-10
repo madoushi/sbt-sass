@@ -14,6 +14,13 @@ object SassCompiler {
     else
       Seq("sass")
 
+  lazy val defaultSassCssOptions = Some( (file:SassFileInfo) => Seq("-l","-I",file.parentPath) ++ Seq(Seq(file.input.getAbsolutePath, ":", file.output.getAbsolutePath).mkString) )
+
+  lazy val defaultSassCssMinifiedOptions = Some( (file:SassFileInfo) => Seq("-t","-I",file.parentPath) ++ Seq(Seq(file.input.getAbsolutePath, ":", file.output.getAbsolutePath).mkString) )
+
+
+  case class SassFileInfo(input: File, output: File, parentPath: String)
+
   /**
    * A wrapper for `compile` that uses the default `sass` executable from the path.
    *
@@ -24,7 +31,7 @@ object SassCompiler {
    * @return A list of filenames that were used to generate the css e.g. dependencies.
    */
   def compileWithDefaultSass(input: File, output: File, outputMinified: File, options: Seq[String] = Seq.empty[String]) =
-    compile(command, input, output, outputMinified, options)
+    compileWithDefaultSassOptions(command, input, output, outputMinified, options)
 
   /**
    * Compile the given input file into a css and a minified css file.
@@ -39,19 +46,44 @@ object SassCompiler {
    * @param options        Additional options for the `sass` executable.
    * @return A list of filenames that were used to generate the css e.g. dependencies.
    */
-  def compile(sassExecutable: Seq[String], input: File, output: File, outputMinified: File, options: Seq[String] = Seq.empty[String]): Seq[String] = {
+  def compileWithDefaultSassOptions(sassExecutable: Seq[String], input: File, output: File, outputMinified: File, options: Seq[String] = Seq.empty[String]): Seq[String] = 
+    compile(sassExecutable,input,output,outputMinified,defaultSassCssOptions,defaultSassCssMinifiedOptions,options)
+
+
+  /**
+   * Compile the given input file into a css and a minified css file.
+   * Additional options for the `sass` executable may be passed in via `options`.
+   * It returns a list of scss source files that were used. Which may be
+   * interesting if includes were used.
+   *
+   * @param sassExecutable The path to the `sass` executable.
+   * @param input          The input file containing SASS code.
+   * @param output         The output file for the generated CSS.
+   * @param outputMinified The output file for the generated and minified CSS.
+   * @param sassCssOptions Command line options to be used for the sass command; set to None to disable this step.
+   * @param sassCssMinifiedOptions Command line options to be used for the sass command to generate minified css; set to None to disable this step.
+   * @param options        Additional options for the `sass` executable.
+   * @return A list of filenames that were used to generate the css e.g. dependencies.
+   */
+  def compile(sassExecutable: Seq[String], input: File, output: File, outputMinified: File, sassCssOptions: Option[SassFileInfo=>Seq[String]],
+    sassCssMinifiedOptions: Option[SassFileInfo=>Seq[String]], options: Seq[String] = Seq.empty[String]): Seq[String] = {
     if (input.getParentFile == null)
       throw new SassCompilerException(Vector(s"No parent file return for $input!"))
 
     val parentPath = input.getParentFile.getAbsolutePath
+    val fileInfo = SassFileInfo(input,output,parentPath)
 
-    runCommand(
-      sassExecutable ++ Seq("-l", "-I", parentPath) ++ options ++ Seq(Seq(input.getAbsolutePath, ":", output.getAbsolutePath).mkString)
-    )
+    sassCssOptions foreach { cmdOptions =>
+      runCommand(
+        sassExecutable ++ cmdOptions(fileInfo) ++ options
+      )
+    }
 
-    runCommand(
-      sassExecutable ++ Seq("-t", "compressed", "-I", parentPath) ++ options ++ Seq(Seq(input.getAbsolutePath, ":", outputMinified.getAbsolutePath).mkString)
-    )
+    sassCssMinifiedOptions foreach { cmdOptions =>
+      runCommand(
+        sassExecutable ++ cmdOptions(fileInfo) ++ options 
+      )
+    }
 
     extractDependencies(output)
   }

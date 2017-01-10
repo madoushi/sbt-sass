@@ -72,6 +72,15 @@ To pass additonal options to `sass` this setting can be used. To use `compass` f
 
     sassOptions in Assets ++= Seq("--compass", "-r", "compass")
 
+#### sassCss / sassCssMinified
+
+Use these settings to override the command line arguments used for generating css / minified css
+(or set them to `None` in order to skip the corresponding task).
+For example, if you want use `node-sass` instead of `sass`, you can use these settings:
+
+    sassCss in Assets := Some( (file) => Seq("-o", file.output.getParentFile.getAbsolutePath, file.input.getAbsolutePath) ),
+    sassCssMinified in Assets := None
+
 ## Development
 
 Please refer to the [contributing](CONTRIBUTING.md) guide.
