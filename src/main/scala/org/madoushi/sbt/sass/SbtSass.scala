@@ -34,7 +34,7 @@ object SbtSass extends AutoPlugin {
 
     managedResourceDirectories += (resourceManaged in sass in Assets).value,
     resourceManaged in sass in Assets := webTarget.value / "sass" / "main",
-    resourceGenerators in Assets <+= sass in Assets,
+    resourceGenerators in Assets += sass in Assets,
 
     sass in Assets := Def.task {
       val sourceDir = (sourceDirectory in Assets).value
