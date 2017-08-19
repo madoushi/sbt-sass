@@ -42,11 +42,12 @@ object SbtSass extends AutoPlugin {
       val targetDir = (resourceManaged in sass in Assets).value
       val sources = (sourceDir ** ((includeFilter in sass in Assets).value -- (excludeFilter in sass in Assets).value)).get
       val generateMinifiedOutput = sassGenerateMinifiedOutput.value
+      val log = streams.value.log
 
       val results = incremental.syncIncremental((streams in Assets).value.cacheDirectory / "run", sources) {
         modifiedSources: Seq[File] =>
           if (modifiedSources.nonEmpty)
-            streams.value.log.info(s"Sass compiling on ${modifiedSources.size} source(s)")
+            log.info(s"Sass compiling on ${modifiedSources.size} source(s)")
 
           val compilationResults = modifiedSources map { source =>
             val sourceName = source.getPath.drop(sourceDir.getPath.length).reverse.dropWhile(_ != '.').reverse
@@ -87,7 +88,7 @@ object SbtSass extends AutoPlugin {
       }
 
       if(results._2.nonEmpty){
-        streams.value.log.info(s"Sass compilation results: ${results._2.mkString(", ")}")
+        log.info(s"Sass compilation results: ${results._2.mkString(", ")}")
       }
 
       (results._1 ++ results._2).toSeq
