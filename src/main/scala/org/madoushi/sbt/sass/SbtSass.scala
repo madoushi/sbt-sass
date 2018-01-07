@@ -14,6 +14,7 @@ object Import {
 
   val sassOptions = SettingKey[Seq[String]]("sassOptions", "Additional options that are passed to the sass executable.")
 
+  val sassGenerateMinifiedOutput = SettingKey[Boolean]("sassGenerateMinifiedOutput", "Generate minified output for every input file in addition to the unminified output.")
 }
 
 object SbtSass extends AutoPlugin {
@@ -40,13 +41,14 @@ object SbtSass extends AutoPlugin {
       val sourceDir = (sourceDirectory in Assets).value
       val targetDir = (resourceManaged in sass in Assets).value
       val sources = (sourceDir ** ((includeFilter in sass in Assets).value -- (excludeFilter in sass in Assets).value)).get
+      val generateMinifiedOutput = sassGenerateMinifiedOutput.value
 
       val results = incremental.syncIncremental((streams in Assets).value.cacheDirectory / "run", sources) {
         modifiedSources: Seq[File] =>
           if (modifiedSources.nonEmpty)
             streams.value.log.info(s"Sass compiling on ${modifiedSources.size} source(s)")
 
-          val compilationResults = modifiedSources map { source => {
+          val compilationResults = modifiedSources map { source =>
             val sourceName = source.getPath.drop(sourceDir.getPath.length).reverse.dropWhile(_ != '.').reverse
             def sourceWithExtn(extn: String): File = targetDir / (sourceName + extn)
             val targetFileCss = sourceWithExtn("css")
@@ -58,7 +60,9 @@ object SbtSass extends AutoPlugin {
             targetFileCss.getParentFile.mkdirs()
 
             // function compiles, creates files and returns imported css-dependencies
-            val dependencies = SassCompiler.compile(sassExecutable.value, source, targetFileCss, targetFileCssMin, sassOptions.value)
+            val dependencies = SassCompiler.compile(sassExecutable.value, source, targetFileCss,
+              if (generateMinifiedOutput) Some(targetFileCssMin) else None,
+              sassOptions.value)
 
             // converting dependencies path from ../../../../file.sass to /normal/absolute/path/to/file.sass
             val readFiles = dependencies.map { (path) =>
@@ -67,21 +71,15 @@ object SbtSass extends AutoPlugin {
                 file(path.replaceAll( """(\.\.\/|\.\.\\)""", "")).toPath.normalize().toString
               file(formattedPath)
             }.toSet + source
-            ((targetFileCss,
-              targetFileCssMin,
-              targetFileCssMap,
-              targetFileCssMinMap),
+
+            val cssFilesWritten = Set(targetFileCss) ++ (if (generateMinifiedOutput) Set(targetFileCssMin) else Set.empty)
+            val mapFilesWritten = Set(targetFileCssMap) ++ (if (generateMinifiedOutput) Set(targetFileCssMinMap) else Set.empty)
+
+            (cssFilesWritten,
               source,
-              OpSuccess(readFiles, Set(
-                targetFileCss,
-                targetFileCssMin,
-                targetFileCssMap,
-                targetFileCssMinMap)))
+              OpSuccess(readFiles, cssFilesWritten ++ mapFilesWritten))
           }
-          }
-          val createdFiles = (compilationResults map (_._1)).foldLeft(Seq.empty[File]) { (createdFilesList, targetFiles) =>
-            createdFilesList ++ Seq(targetFiles._1, targetFiles._2)
-          }
+          val createdFiles = compilationResults.flatMap(_._1).toSet
           val cachedForIncrementalCompilation = compilationResults.foldLeft(Map.empty[File, OpResult]) { (acc, sourceAndResultFiles) =>
             acc ++ Map((sourceAndResultFiles._2, sourceAndResultFiles._3))
           }
@@ -89,15 +87,16 @@ object SbtSass extends AutoPlugin {
       }
 
       if(results._2.nonEmpty){
-        streams.value.log.info(s"Sass compilation results: ${results._2.toSet.mkString(", ")}")
+        streams.value.log.info(s"Sass compilation results: ${results._2.mkString(", ")}")
       }
 
-      (results._1 ++ results._2.toSet).toSeq
+      (results._1 ++ results._2).toSeq
 
     }.dependsOn(WebKeys.webModules in Assets).value,
 
     sassExecutable in Assets := SassCompiler.command,
-    sassOptions in Assets := (webModuleDirectories in Assets).value.getPaths.foldLeft(Seq.empty[String]){ (acc, str) => acc ++ Seq("-I", str) }
+    sassOptions in Assets := (webModuleDirectories in Assets).value.getPaths.foldLeft(Seq.empty[String]){ (acc, str) => acc ++ Seq("-I", str) },
+    sassGenerateMinifiedOutput in Assets := true
   )
 
   override def projectSettings: Seq[Setting[_]] = inConfig(Assets)(baseSbtSassSettings)

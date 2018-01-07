@@ -68,9 +68,23 @@ This options tells the plugin the exact location of the `sass` program. If it is
 
 #### sassOptions
 
-To pass additonal options to `sass` this setting can be used. To use `compass` for example use the following:
+To pass additional options to `sass` this setting can be used. To use `compass` for example use the following:
 
     sassOptions in Assets ++= Seq("--compass", "-r", "compass")
+
+#### sassGenerateMinifiedOutput
+
+Defines if a minified css file (named *.min.css) should be created in addition to the unminified file for each sass 
+file not starting with an underscore (default is true).
+
+Disabling the minified version improves compilation speed (needs about half the time then) because
+each version needs a separate invocation of sass. You can alternatively use 
+[sbt-css-compress](https://github.com/noisycr1cket/sbt-css-compress) for creating the minified version 
+only when creating a package for production.
+
+For disabling the minified version (and improving compilation speed), use the following:
+
+    sassGenerateMinifiedOutput in Assets := false
 
 ## Development
 
