@@ -19,11 +19,11 @@ object SassCompiler {
    *
    * @param input          The input file containing SASS code.
    * @param output         The output file for the generated CSS.
-   * @param outputMinified The output file for the generated and minified CSS.
+   * @param outputMinified The output file for the generated and minified CSS (optional).
    * @param options        Additional options for the `sass` executable.
    * @return A list of filenames that were used to generate the css e.g. dependencies.
    */
-  def compileWithDefaultSass(input: File, output: File, outputMinified: File, options: Seq[String] = Seq.empty[String]) =
+  def compileWithDefaultSass(input: File, output: File, outputMinified: Option[File], options: Seq[String] = Seq.empty[String]) =
     compile(command, input, output, outputMinified, options)
 
   /**
@@ -35,11 +35,11 @@ object SassCompiler {
    * @param sassExecutable The path to the `sass` executable.
    * @param input          The input file containing SASS code.
    * @param output         The output file for the generated CSS.
-   * @param outputMinified The output file for the generated and minified CSS.
+   * @param outputMinified The output file for the generated and minified CSS (optional).
    * @param options        Additional options for the `sass` executable.
    * @return A list of filenames that were used to generate the css e.g. dependencies.
    */
-  def compile(sassExecutable: Seq[String], input: File, output: File, outputMinified: File, options: Seq[String] = Seq.empty[String]): Seq[String] = {
+  def compile(sassExecutable: Seq[String], input: File, output: File, outputMinified: Option[File], options: Seq[String] = Seq.empty[String]): Seq[String] = {
     if (input.getParentFile == null)
       throw new SassCompilerException(Vector(s"No parent file return for $input!"))
 
@@ -49,9 +49,11 @@ object SassCompiler {
       sassExecutable ++ Seq("-l", "-I", parentPath) ++ options ++ Seq(Seq(input.getAbsolutePath, ":", output.getAbsolutePath).mkString)
     )
 
-    runCommand(
-      sassExecutable ++ Seq("-t", "compressed", "-I", parentPath) ++ options ++ Seq(Seq(input.getAbsolutePath, ":", outputMinified.getAbsolutePath).mkString)
-    )
+    for (minOutput <- outputMinified) {
+      runCommand(
+        sassExecutable ++ Seq("-t", "compressed", "-I", parentPath) ++ options ++ Seq(Seq(input.getAbsolutePath, ":", minOutput.getAbsolutePath).mkString)
+      )
+    }
 
     extractDependencies(output)
   }

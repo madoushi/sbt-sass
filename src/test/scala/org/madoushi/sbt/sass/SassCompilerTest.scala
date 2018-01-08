@@ -13,7 +13,7 @@ class SassCompilerTest extends FunSpec with MustMatchers {
           val output = File.createTempFile("sbt-sass-test", ".css")
           val outputMinified = File.createTempFile("sbt-sass-test", ".min.css")
 
-          val processOutput = SassCompiler.compileWithDefaultSass(input, output, outputMinified)
+          val processOutput = SassCompiler.compileWithDefaultSass(input, output, Some(outputMinified))
 
           val css = scala.io.Source.fromFile(output).mkString
           val cssMin = scala.io.Source.fromFile(outputMinified).mkString
@@ -35,7 +35,7 @@ class SassCompilerTest extends FunSpec with MustMatchers {
           val output = File.createTempFile("sbt-sass-test", ".css")
           val outputMinified = File.createTempFile("sbt-sass-test", ".min.css")
 
-          val processOutput = SassCompiler.compileWithDefaultSass(input, output, outputMinified)
+          val processOutput = SassCompiler.compileWithDefaultSass(input, output, Some(outputMinified))
 
           val css = scala.io.Source.fromFile(output).mkString
           val cssMin = scala.io.Source.fromFile(outputMinified).mkString
@@ -60,7 +60,7 @@ class SassCompilerTest extends FunSpec with MustMatchers {
         val output = File.createTempFile("sbt-sass-test", ".css")
         val outputMinified = File.createTempFile("sbt-sass-test", ".min.css")
 
-        val exception = the [SassCompilerException] thrownBy SassCompiler.compileWithDefaultSass(input, output, outputMinified)
+        val exception = the [SassCompilerException] thrownBy SassCompiler.compileWithDefaultSass(input, output, Some(outputMinified))
         exception.getMessage must include("Invalid CSS after")
       }
     }
