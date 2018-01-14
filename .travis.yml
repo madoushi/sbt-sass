@@ -1,6 +1,14 @@
 language: scala
+
 scala:
-  - 2.10.6
+  - 2.12.4
+
+jdk:
+  - oraclejdk8
+
 before_install:
   - gem install sass
+
+script:
+  - sbt ^test
 
