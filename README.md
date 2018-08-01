@@ -12,6 +12,16 @@ plugins seem to be abandoned. Therefore we decided to create this project.
 
 The initial development of this plugin was sponsored by the [Wegtam GmbH](https://www.wegtam.com).
 
+### DEPRECATION NOTICE for Ruby-SASS!
+
+The base of this plugin is the [sass rubygem](https://github.com/sass/ruby-sass) 
+which is now deprecated. See the website for details: https://sass-lang.com/ruby-sass
+
+**As long as the gem is available this plugin will continue to work.** However if it
+indeed ceases to exist please consider using the 
+[sbt-sassify](https://github.com/irundaia/sbt-sassify) plugin as it uses the
+[libsass](https://sass-lang.com/libsass) implementation as backend.
+
 ## Prerequisites
 
 A sass compiler needs to be installed for the plugin to work. This means
